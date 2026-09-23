@@ -1,1 +1,1 @@
-web: python manage.py migrate && gunicorn todo_main.wsgi:application --bind 0.0.0.0:$PORT
+web: python manage.py migrate && python manage.py collectstatic --noinput && gunicorn todo_main.wsgi:application --bind 0.0.0.0:$PORT
