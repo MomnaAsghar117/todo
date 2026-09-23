@@ -28,7 +28,9 @@ SECRET_KEY = config("SECRET_KEY")
 DEBUG = True
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS").split(',')
-
+CSRF_TRUSTED_ORIGINS = [
+    "https://todo-production-102a.up.railway.app",
+]
 
 # Application definition
 
