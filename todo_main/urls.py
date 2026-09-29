@@ -19,7 +19,16 @@ from django.urls import path, include
 from . import views
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.home, name = 'home'),
+    path('', views.register, name = 'register'),
+    path('register/', views.register, name='register'),
+    path('verify-registration/', views.verify_registration, name='verify_registration'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
+    path('forgot-password/', views.forgot_password, name='forgot_password'),
+    path('verify-password-reset/', views.verify_password_reset, name='verify_password_reset'),
+    path('reset-password/<int:user_id>/', views.reset_password, name='reset_password'),
+    path('profile/', views.profile, name='profile'),
+    path('profile/password/', views.change_password, name='change_password'),
     
     # ToDo
     path('todo/',  include('todo.urls')),

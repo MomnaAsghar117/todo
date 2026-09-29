@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}ToDo App{% endblock %}</title>
+    <style>
+        :root { --ink:#15221d; --muted:#65736c; --paper:#f7f6f0; --accent:#e66f4d; --line:#d9ded7; }
+        * { box-sizing:border-box; } body { margin:0; min-height:100vh; color:var(--ink); background:radial-gradient(circle at 10% 0%, #e4efe4 0 22%, transparent 43%), var(--paper); font-family:Georgia, 'Times New Roman', serif; }
+        .shell { width:min(1080px, calc(100% - 40px)); margin:auto; padding:28px 0; } nav { display:flex; justify-content:space-between; align-items:center; margin-bottom:60px; } .brand { color:var(--ink); font-size:1.35rem; font-weight:bold; text-decoration:none; } nav a { color:var(--ink); margin-left:22px; text-decoration:none; font:600 .9rem Arial, sans-serif; }
+        .layout { display:grid; grid-template-columns:1fr minmax(320px, 430px); gap:80px; align-items:center; min-height:65vh; } .intro h1 { font-size:clamp(3rem, 8vw, 6.7rem); line-height:.9; letter-spacing:-.06em; margin:0 0 24px; } .intro p { color:var(--muted); font:1.05rem/1.6 Arial, sans-serif; max-width:430px; }
+        .panel { background:#fff; border:1px solid var(--line); padding:34px; box-shadow:14px 14px 0 #dce8dc; } h2 { margin:0 0 8px; font-size:2rem; } .subtitle { color:var(--muted); font: .9rem/1.5 Arial, sans-serif; margin:0 0 25px; } label { display:block; font:600 .78rem Arial, sans-serif; margin:16px 0 7px; } input { width:100%; padding:13px 14px; border:1px solid var(--line); background:#fbfcf9; color:var(--ink); font:1rem Arial, sans-serif; } button { width:100%; margin-top:22px; padding:14px; border:0; background:var(--accent); color:white; cursor:pointer; font:700 .9rem Arial, sans-serif; } .links { display:flex; justify-content:space-between; gap:12px; margin-top:20px; font: .82rem Arial, sans-serif; } a { color:#a34732; } .messages { padding:0; margin:0 0 18px; list-style:none; font: .85rem Arial, sans-serif; } .messages li { padding:10px 12px; background:#fff0eb; color:#9d3d27; margin-bottom:7px; } .note { color:var(--muted); font: .85rem/1.5 Arial, sans-serif; } .profile-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; } .profile-grid .full { grid-column:1/-1; } .readonly { background:#eef1ec; color:#718077; }
+        @media (max-width:700px) { .shell { width:min(100% - 28px, 500px); } nav { margin-bottom:30px; } .layout { display:block; min-height:0; } .intro { margin-bottom:34px; } .intro h1 { font-size:4rem; } .panel { padding:24px; box-shadow:8px 8px 0 #dce8dc; } .profile-grid { display:block; } }
+    </style>
+</head>
+<body>
+<div class="shell">
+    <nav><a class="brand" href="{% url 'home' %}">daymark /</a><div>{% if user.is_authenticated %}<a href="{% url 'profile' %}">Profile</a><a href="{% url 'logout' %}">Log out</a>{% else %}<a href="{% url 'login' %}">Log in</a><a href="{% url 'register' %}">Register</a>{% endif %}</div></nav>
+    {% if messages %}<ul class="messages">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>{% endif %}
+    {% block content %}{% endblock %}
+</div>
+</body>
+</html>
