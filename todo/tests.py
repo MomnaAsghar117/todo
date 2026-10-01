@@ -8,6 +8,11 @@ from .models import EmailOTP, Task
 
 @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
 class AuthenticationTests(TestCase):
+	def test_root_is_login_page(self):
+		response = self.client.get('/')
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'Welcome back')
+
 	def test_home_requires_login(self):
 		response = self.client.get(reverse('home'))
 		self.assertRedirects(response, reverse('login'))

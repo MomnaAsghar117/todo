@@ -1,4 +1,5 @@
 import random
+import logging
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login, logout
@@ -11,19 +12,26 @@ from django.views.decorators.cache import never_cache
 from todo.models import EmailOTP, Task
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 
 def _send_otp(user, purpose):
     code = f'{random.randint(0, 999999):06d}'
     EmailOTP.objects.filter(user=user, purpose=purpose).delete()
     EmailOTP.objects.create(user=user, purpose=purpose, code=code)
-    send_mail(
-        'Your ToDo App verification code',
-        f'Your verification code is {code}. It expires in 10 minutes.',
-        settings.DEFAULT_FROM_EMAIL,
-        [user.email],
-        fail_silently=False,
-    )
+    try:
+        send_mail(
+            'Your ToDo App verification code',
+            f'Your verification code is {code}. It expires in 10 minutes.',
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email],
+            fail_silently=False,
+        )
+    except Exception:
+        EmailOTP.objects.filter(user=user, purpose=purpose).delete()
+        logger.exception('Unable to send %s OTP to %s', purpose, user.email)
+        return False
+    return True
 
 
 def _valid_otp(user, purpose, code):
@@ -58,7 +66,10 @@ def register(request):
             user = User(username=email, email=email, first_name=request.POST.get('first_name', '').strip(), last_name=request.POST.get('last_name', '').strip(), is_active=False)
             user.set_password(password)
             user.save()
-            _send_otp(user, EmailOTP.PURPOSE_REGISTRATION)
+            if not _send_otp(user, EmailOTP.PURPOSE_REGISTRATION):
+                user.delete()
+                messages.error(request, 'We could not send the verification email. Check the email settings and try again.')
+                return render(request, 'register.html')
             request.session['registration_user_id'] = user.id
             return redirect('verify_registration')
     return render(request, 'register.html')
@@ -104,7 +115,9 @@ def forgot_password(request):
     if request.method == 'POST':
         user = User.objects.filter(email__iexact=request.POST.get('email', '').strip().lower(), is_active=True).first()
         if user:
-            _send_otp(user, EmailOTP.PURPOSE_PASSWORD_RESET)
+            if not _send_otp(user, EmailOTP.PURPOSE_PASSWORD_RESET):
+                messages.error(request, 'We could not send the verification email. Check the email settings and try again.')
+                return render(request, 'forgot_password.html')
             request.session['password_reset_user_id'] = user.id
             return redirect('verify_password_reset')
         messages.error(request, 'No verified account was found for that email.')
