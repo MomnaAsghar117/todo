@@ -1,0 +1,24 @@
+{% extends 'admin_base.html' %}
+{% block title %}Admin Dashboard | {{ site_settings.website_name }}{% endblock %}
+{% block content %}
+<div class="topline">
+    <div>
+        <p class="muted">Administration</p>
+        <h1>Overview.</h1>
+    </div>
+    <span class="muted">{{ request.user.email }}</span>
+</div>
+<section class="stats">
+    <div class="stat"><strong>{{ total_users }}</strong><span>Total registered users</span></div>
+    <div class="stat"><strong>{{ active_users }}</strong><span>Active in the last 30 days</span></div>
+    <div class="stat"><strong>{{ total_tasks }}</strong><span>Total tasks</span></div>
+    <div class="stat"><strong>{{ completed_tasks }}</strong><span>Completed tasks</span></div>
+    <div class="stat"><strong>{{ pending_tasks }}</strong><span>Pending tasks</span></div>
+</section>
+<section class="panel">
+    <h2>Quick actions</h2>
+    <p class="muted">Manage the people and workspaces connected to {{ site_settings.website_name }}.</p>
+    <a class="button" href="{% url 'admin_users' %}">Browse users</a>
+        <a class="button" href="{% url 'view_website' %}" target="_blank" rel="noopener noreferrer">View Website</a>
+</section>
+{% endblock %}

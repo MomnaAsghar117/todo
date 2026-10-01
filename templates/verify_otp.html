@@ -1,3 +1,23 @@
 {% extends 'base_auth.html' %}
 {% block title %}{{ title }} | Daymark{% endblock %}
-{% block content %}<main class="layout"><section class="intro"><h1>One small<br>check.</h1><p>Almost there. This keeps your account and your tasks in your hands.</p></section><section class="panel"><h2>{{ title }}</h2><p class="subtitle">{{ description }}</p><form method="post">{% csrf_token %}<label for="otp">6-digit code</label><input id="otp" name="otp" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" required><button type="submit">Verify code</button></form><div class="links"><a href="{% url 'login' %}">Back to login</a></div></section></main>{% endblock %}
+{% block content %}
+<main class="layout">
+    <section class="intro">
+        <h1>One small<br>check.</h1>
+        <p>Almost there. This keeps your account and your tasks in your hands.</p>
+    </section>
+    <section class="panel">
+        <h2>{{ title }}</h2>
+        <p class="subtitle">{{ description }}</p>
+        <form method="post">
+            {% csrf_token %}
+            <label for="otp">6-digit code</label>
+            <input id="otp" name="otp" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" required>
+            <button type="submit">Verify code</button>
+        </form>
+        <div class="links">
+            <a href="{% url 'login' %}">Back to login</a>
+        </div>
+    </section>
+</main>
+{% endblock %}

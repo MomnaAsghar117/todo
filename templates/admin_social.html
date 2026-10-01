@@ -1,0 +1,34 @@
+{% extends 'admin_base.html' %}
+{% block title %}Social Media | Admin{% endblock %}
+{% block content %}
+<div class="topline"><div><p class="muted">Administration / Social Media</p><h1>Connect.</h1></div></div>
+<section class="panel">
+    <h2>Add social link</h2>
+    <form class="searchbar" method="post">
+        {% csrf_token %}
+        <select name="platform">{% for value, label in platforms %}<option value="{{ value }}">{{ label }}</option>{% endfor %}</select>
+        <input name="url" type="url" placeholder="https://..." required>
+        <input type="hidden" name="position" value="0">
+        <label><input type="checkbox" name="is_active" checked> Active</label>
+        <button class="button" type="submit">Add</button>
+    </form>
+</section>
+<section class="panel">
+    <h2>Saved links</h2>
+    {% for link in social_links %}
+        <form class="searchbar" method="post" style="align-items:center">
+            {% csrf_token %}
+            <input type="hidden" name="link_id" value="{{ link.pk }}">
+            <select name="platform">{% for value, label in platforms %}<option value="{{ value }}" {% if link.platform == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+            <input name="url" type="url" value="{{ link.url }}" required>
+            <input name="position" type="number" value="{{ link.position }}" min="0" style="max-width:80px">
+            <label><input type="checkbox" name="is_active" {% if link.is_active %}checked{% endif %}> Active</label>
+            <button class="button" type="submit">Save</button>
+            <button class="button" type="submit" formaction="{% url 'toggle_social' link.pk %}">{% if link.is_active %}Deactivate{% else %}Activate{% endif %}</button>
+            <button class="button" type="submit" formaction="{% url 'delete_social' link.pk %}" onclick="return confirm('Delete this social link permanently?');">Delete</button>
+        </form>
+    {% empty %}
+        <p class="muted">No social links have been added.</p>
+    {% endfor %}
+</section>
+{% endblock %}

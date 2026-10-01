@@ -1,3 +1,64 @@
-{% extends 'base_auth.html' %}
-{% block title %}Register | Daymark{% endblock %}
-{% block content %}<main class="layout"><section class="intro"><h1>Your day,<br>on purpose.</h1><p>Start with a simple account. We will verify your email before your first session.</p></section><section class="panel"><h2>Create account</h2><p class="subtitle">Your email will receive a verification code.</p><form method="post">{% csrf_token %}<div class="profile-grid"><div><label for="first_name">First name</label><input id="first_name" name="first_name" required></div><div><label for="last_name">Last name</label><input id="last_name" name="last_name" required></div><div class="full"><label for="email">Email</label><input id="email" type="email" name="email" autocomplete="email" required></div><div><label for="password">Password</label><input id="password" type="password" name="password" autocomplete="new-password" required></div><div><label for="confirmation">Confirm</label><input id="confirmation" type="password" name="confirmation" autocomplete="new-password" required></div></div><button type="submit">Continue to verification</button></form><div class="links"><a href="{% url 'forgot_password' %}">Forgot password?</a><a href="{% url 'login' %}">Log in</a></div></section></main>{% endblock %}
+{% extends 'base_auth.html' %} {% block title %}Register | Daymark{% endblock %}
+{% block content %}
+<main class="layout">
+  <section class="intro">
+    <h1>Your day,<br />on purpose.</h1>
+    <p>
+      Start with a simple account. We will verify your email before your first
+      session.
+    </p>
+  </section>
+  <section class="panel">
+    <h2>Create account</h2>
+    <p class="subtitle">Your email will receive a verification code.</p>
+    <form method="post">
+      {% csrf_token %}
+      <div class="profile-grid">
+        <div>
+          <label for="first_name">First name</label
+          ><input id="first_name" name="first_name" required />
+        </div>
+        <div>
+          <label for="last_name">Last name</label
+          ><input id="last_name" name="last_name" required />
+        </div>
+        <div class="full">
+          <label for="email">Email</label
+          ><input
+            id="email"
+            type="email"
+            name="email"
+            autocomplete="email"
+            required
+          />
+        </div>
+        <div>
+          <label for="password">Password</label
+          ><input
+            id="password"
+            type="password"
+            name="password"
+            autocomplete="new-password"
+            required
+          />
+        </div>
+        <div>
+          <label for="confirmation">Confirm</label
+          ><input
+            id="confirmation"
+            type="password"
+            name="confirmation"
+            autocomplete="new-password"
+            required
+          />
+        </div>
+      </div>
+      <button type="submit">Continue to verification</button>
+    </form>
+    <div class="links">
+      <a href="{% url 'forgot_password' %}">Forgot password?</a
+      ><a href="{% url 'login' %}">Log in</a>
+    </div>
+  </section>
+</main>
+{% endblock %}

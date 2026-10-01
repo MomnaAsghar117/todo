@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}Admin | {{ site_settings.website_name }}{% endblock %}</title>
+    <style>:root {
+  --accent: #8b5e3c;
+  --ink: #211c18;
+  --muted: #766f67;
+  --line: #e6ded5;
+  --paper: #f7f4ef;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Arial, sans-serif;
+}
+.admin-shell {
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  min-height: 100vh;
+}
+.sidebar {
+  padding: 28px 18px;
+  background: #211c18;
+  color: #fff;
+}
+.brand {
+  display: block;
+  color: #fff;
+  font:
+    bold 1.4rem Georgia,
+    serif;
+  margin: 0 12px 48px;
+}
+.sidebar nav {
+  display: grid;
+  gap: 7px;
+}
+.sidebar a {
+  padding: 12px;
+  border-radius: 8px;
+  color: #dcd2c8;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.sidebar a:hover,
+.sidebar a.active {
+  background: #fff;
+  color: #211c18;
+}
+.content {
+  padding: 30px 4vw;
+}
+.topline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 36px;
+}
+h1 {
+  font:
+    700 clamp(2.2rem, 5vw, 4rem)/1 Georgia,
+    serif;
+  letter-spacing: -0.05em;
+  margin: 0;
+}
+h2 {
+  font:
+    700 1.7rem Georgia,
+    serif;
+}
+.muted {
+  color: var(--muted);
+}
+.button {
+  display: inline-block;
+  padding: 11px 15px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+.stat,
+.panel {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 7px 20px #3826110b;
+}
+.stat strong {
+  display: block;
+  font:
+    700 2rem Georgia,
+    serif;
+}
+.stat span {
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+.panel {
+  margin-top: 24px;
+}
+.searchbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.searchbar input,
+.searchbar select {
+  flex: 1;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.table-wrap {
+  overflow: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th,
+td {
+  text-align: left;
+  padding: 13px;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.84rem;
+}
+th {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+@media (max-width: 760px) {
+  .admin-shell {
+    display: block;
+  }
+  .sidebar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    overflow: auto;
+    padding: 12px;
+  }
+  .brand {
+    margin: 0 14px 0 0;
+    white-space: nowrap;
+  }
+  .sidebar nav {
+    display: flex;
+  }
+  .sidebar a {
+    white-space: nowrap;
+  }
+  .content {
+    padding: 25px 16px;
+  }
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+</style>
+  </head>
+  <body>
+    <div class="admin-shell">
+      <aside class="sidebar">
+        <a class="brand" href="{% url 'admin_dashboard' %}">{{ site_settings.website_name }} Admin</a>
+        <nav>
+          <a href="{% url 'admin_dashboard' %}">Dashboard</a
+          ><a href="{% url 'admin_users' %}">Users</a
+          ><a href="{% url 'view_website' %}" target="_blank" rel="noopener noreferrer">View Website</a
+          ><a href="{% url 'admin_customization' %}">Website Customization</a
+          ><a href="{% url 'admin_social' %}">Social Media</a
+          ><a href="{% url 'admin_settings' %}">Settings</a
+          ><a href="{% url 'logout' %}">Logout</a>
+        </nav>
+      </aside>
+      <main class="content">
+        {% if messages %}{% for message in messages %}
+        <p>{{ message }}</p>
+        {% endfor %}{% endif %}{% block content %}{% endblock %}
+      </main>
+    </div>
+  </body>
+</html>

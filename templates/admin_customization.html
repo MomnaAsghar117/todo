@@ -1,0 +1,20 @@
+{% extends 'admin_base.html' %}
+{% block title %}Website Customization | Admin{% endblock %}
+{% block content %}
+<div class="topline"><div><p class="muted">Administration / Website</p><h1>Customize.</h1></div></div>
+<section class="panel">
+    <h2>Website content</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label>Website name</label>
+        <input name="website_name" value="{{ site_settings.website_name }}" maxlength="120" required>
+        <label>Homepage quote</label>
+        <textarea name="homepage_quote" maxlength="255" required>{{ site_settings.homepage_quote }}</textarea>
+        <label>Footer description</label>
+        <textarea name="footer_description" maxlength="255" required>{{ site_settings.footer_description }}</textarea>
+        <label>Contact email</label>
+        <input type="email" name="contact_email" value="{{ site_settings.contact_email }}" placeholder="Optional">
+        <button class="button" type="submit">Save website settings</button>
+    </form>
+</section>
+{% endblock %}

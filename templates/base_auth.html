@@ -3,21 +3,235 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}ToDo App{% endblock %}</title>
+    <title>{% block title %}{{ site_settings.website_name }}{% endblock %}</title>
     <style>
-        :root { --ink:#15221d; --muted:#65736c; --paper:#f7f6f0; --accent:#e66f4d; --line:#d9ded7; }
-        * { box-sizing:border-box; } body { margin:0; min-height:100vh; color:var(--ink); background:radial-gradient(circle at 10% 0%, #e4efe4 0 22%, transparent 43%), var(--paper); font-family:Georgia, 'Times New Roman', serif; }
-        .shell { width:min(1080px, calc(100% - 40px)); margin:auto; padding:28px 0; } nav { display:flex; justify-content:space-between; align-items:center; margin-bottom:60px; } .brand { color:var(--ink); font-size:1.35rem; font-weight:bold; text-decoration:none; } nav a { color:var(--ink); margin-left:22px; text-decoration:none; font:600 .9rem Arial, sans-serif; }
-        .layout { display:grid; grid-template-columns:1fr minmax(320px, 430px); gap:80px; align-items:center; min-height:65vh; } .intro h1 { font-size:clamp(3rem, 8vw, 6.7rem); line-height:.9; letter-spacing:-.06em; margin:0 0 24px; } .intro p { color:var(--muted); font:1.05rem/1.6 Arial, sans-serif; max-width:430px; }
-        .panel { background:#fff; border:1px solid var(--line); padding:34px; box-shadow:14px 14px 0 #dce8dc; } h2 { margin:0 0 8px; font-size:2rem; } .subtitle { color:var(--muted); font: .9rem/1.5 Arial, sans-serif; margin:0 0 25px; } label { display:block; font:600 .78rem Arial, sans-serif; margin:16px 0 7px; } input { width:100%; padding:13px 14px; border:1px solid var(--line); background:#fbfcf9; color:var(--ink); font:1rem Arial, sans-serif; } button { width:100%; margin-top:22px; padding:14px; border:0; background:var(--accent); color:white; cursor:pointer; font:700 .9rem Arial, sans-serif; } .links { display:flex; justify-content:space-between; gap:12px; margin-top:20px; font: .82rem Arial, sans-serif; } a { color:#a34732; } .messages { padding:0; margin:0 0 18px; list-style:none; font: .85rem Arial, sans-serif; } .messages li { padding:10px 12px; background:#fff0eb; color:#9d3d27; margin-bottom:7px; } .note { color:var(--muted); font: .85rem/1.5 Arial, sans-serif; } .profile-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; } .profile-grid .full { grid-column:1/-1; } .readonly { background:#eef1ec; color:#718077; }
-        @media (max-width:700px) { .shell { width:min(100% - 28px, 500px); } nav { margin-bottom:30px; } .layout { display:block; min-height:0; } .intro { margin-bottom:34px; } .intro h1 { font-size:4rem; } .panel { padding:24px; box-shadow:8px 8px 0 #dce8dc; } .profile-grid { display:block; } }
+        :root {
+            --accent: {{ profile.accent_color|default:'#8b5e3c' }};
+            --accent-ink: {{ profile.accent_text_color|default:'#ffffff' }};
+            --paper: {{ profile.background_color|default:'#f7f6f0' }};
+            --ink: {{ profile.background_text_color|default:'#15221d' }};
+            --surface: {{ profile.surface_color|default:'#ffffff' }};
+            --surface-ink: {{ profile.surface_text_color|default:'#201c18' }};
+            --muted: color-mix(in srgb, var(--ink) 65%, transparent);
+            --line: color-mix(in srgb, var(--ink) 18%, transparent);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--ink);
+            background: var(--paper);
+            {% if profile.background_image %}
+            background-image: linear-gradient(
+                rgba(246, 239, 227, 0.82),
+                rgba(246, 239, 227, 0.82)
+            ), url('{% url 'background_image' %}');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            {% endif %}
+            font-family: Georgia, 'Times New Roman', serif;
+        }
+
+        .shell {
+            width: min(1080px, calc(100% - 40px));
+            margin: auto;
+            padding: 28px 0;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 60px;
+        }
+
+        .brand {
+            color: var(--ink);
+            font-size: 1.35rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        nav a {
+            color: var(--ink);
+            margin-left: 22px;
+            text-decoration: none;
+            font: 600 0.9rem Arial, sans-serif;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr minmax(320px, 430px);
+            gap: 80px;
+            align-items: center;
+            min-height: 65vh;
+        }
+
+        .intro h1 {
+            font-size: clamp(3rem, 8vw, 6.7rem);
+            line-height: 0.9;
+            letter-spacing: -0.06em;
+            margin: 0 0 24px;
+        }
+
+        .intro p {
+            color: var(--muted);
+            font: 1.05rem/1.6 Arial, sans-serif;
+            max-width: 430px;
+        }
+
+        .panel {
+            background: var(--surface);
+            color: var(--surface-ink);
+            border: 1px solid var(--line);
+            padding: 34px;
+            box-shadow: 14px 14px 0 color-mix(in srgb, var(--accent) 25%, white);
+        }
+
+        h2 {
+            margin: 0 0 8px;
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            color: var(--surface-ink);
+            opacity: 0.72;
+            font: 0.9rem/1.5 Arial, sans-serif;
+            margin: 0 0 25px;
+        }
+
+        label {
+            display: block;
+            font: 600 0.78rem Arial, sans-serif;
+            margin: 16px 0 7px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid var(--line);
+            background: color-mix(in srgb, var(--surface) 72%, var(--paper));
+            color: var(--surface-ink);
+            font: 1rem Arial, sans-serif;
+        }
+
+        input[type="color"].color-control {
+            width: 64px;
+            height: 44px;
+            padding: 4px;
+            cursor: pointer;
+        }
+
+        .panel button {
+            width: 100%;
+            margin-top: 22px;
+            padding: 14px;
+            border: 0;
+            background: var(--accent);
+            color: var(--accent-ink);
+            cursor: pointer;
+            font: 700 0.9rem Arial, sans-serif;
+        }
+
+        .links {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 20px;
+            font: 0.82rem Arial, sans-serif;
+        }
+
+        a {
+            color: var(--accent);
+        }
+
+        .messages {
+            padding: 0;
+            margin: 0 0 18px;
+            list-style: none;
+            font: 0.85rem Arial, sans-serif;
+        }
+
+        .messages li {
+            padding: 10px 12px;
+            background: #fff0eb;
+            color: #9d3d27;
+            margin-bottom: 7px;
+        }
+
+        .readonly {
+            background: rgba(0, 0, 0, 0.06);
+            color: var(--muted);
+        }
+
+        @media (max-width: 700px) {
+            .shell {
+                width: min(100% - 28px, 500px);
+            }
+
+            nav {
+                margin-bottom: 30px;
+            }
+
+            .layout {
+                display: block;
+                min-height: 0;
+            }
+
+            .intro {
+                margin-bottom: 34px;
+            }
+
+            .intro h1 {
+                font-size: 4rem;
+            }
+
+            .panel {
+                padding: 24px;
+                box-shadow: 8px 8px 0 color-mix(in srgb, var(--accent) 25%, white);
+            }
+        }
     </style>
 </head>
 <body>
-<div class="shell">
-    <nav><a class="brand" href="{% url 'home' %}">daymark</a><div>{% if user.is_authenticated %}<a href="{% url 'profile' %}">Profile</a><a href="{% url 'logout' %}">Log out</a>{% else %}<a href="{% url 'login' %}">Log in</a><a href="{% url 'register' %}">Register</a>{% endif %}</div></nav>
-    {% if messages %}<ul class="messages">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>{% endif %}
-    {% block content %}{% endblock %}
-</div>
+    <div class="shell">
+        <nav>
+            <a class="brand" href="{% if user.is_authenticated %}{% url 'home' %}{% else %}{% url 'landing' %}{% endif %}">{{ site_settings.website_name }}</a>
+            <div>
+                {% if user.is_authenticated %}
+                    {% if profile.profile_picture %}
+                        <a href="{% url 'profile' %}">
+                            <img src="{% url 'profile_picture' %}" alt="Profile" style="width: 34px; height: 34px; object-fit: cover; border-radius: 50%; vertical-align: middle">
+                        </a>
+                    {% endif %}
+                    <a href="{% url 'profile' %}">Profile</a>
+                    {% if user.is_staff or user.is_superuser %}<a href="{% url 'admin_dashboard' %}">Admin Dashboard</a>{% endif %}
+                    <a href="{% url 'logout' %}">Log out</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Log in</a>
+                    <a href="{% url 'register' %}">Register</a>
+                {% endif %}
+            </div>
+        </nav>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% block content %}{% endblock %}
+        <footer class="site-footer">
+            <strong>{{ site_settings.website_name }}</strong>
+            <span>{{ site_settings.footer_description }}</span>
+            {% if site_settings.contact_email %}<a href="mailto:{{ site_settings.contact_email }}">{{ site_settings.contact_email }}</a>{% endif %}
+            {% for link in active_social_links %}<a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{% if link.platform == 'instagram' %}◎{% elif link.platform == 'facebook' %}f{% elif link.platform == 'twitter' %}𝕏{% elif link.platform == 'linkedin' %}in{% elif link.platform == 'youtube' %}▶{% elif link.platform == 'tiktok' %}♪{% else %}↗{% endif %} {{ link.get_platform_display }}</a>{% endfor %}
+        </footer>
+    </div>
 </body>
 </html>

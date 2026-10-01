@@ -1,0 +1,33 @@
+{% extends 'base_dashboard.html' %}
+{% block title %}{{ task.task }} | {{ site_settings.website_name }}{% endblock %}
+{% block content %}
+<p><a class="muted" href="{% url 'home' %}">← Back to tasks</a></p>
+<section class="hero">
+    <div>
+        <p class="muted">Task detail</p>
+        <h1>{{ task.task }}</h1>
+    </div>
+    <div class="form-actions">
+        <a class="button secondary" href="{% url 'edit_task' task.pk %}">Edit task</a>
+        <form method="post" action="{% url 'delete_task' task.pk %}" onsubmit="return confirm('Delete this task?');">
+            {% csrf_token %}
+            <button class="button danger">Delete</button>
+        </form>
+    </div>
+</section>
+<div class="detail-grid">
+    <section class="panel">
+        <h2>Description</h2>
+        <p class="detail-copy">{{ task.description|default:'No description added.' }}</p>
+    </section>
+    <aside class="panel detail-meta">
+        <div><small>Status</small><strong>{% if task.is_completed %}Completed{% else %}Pending{% endif %}</strong></div>
+        <div><small>Priority</small><strong>{{ task.get_priority_display }}</strong></div>
+        <div><small>Category</small><strong>{{ task.get_category_display|default:'None' }}</strong></div>
+        <div><small>Due date</small><strong>{{ task.due_label }}</strong></div>
+        <div><small>Favorite</small><strong>{% if task.is_favorite %}Starred{% else %}Not starred{% endif %}</strong></div>
+        <div><small>Created</small><strong>{{ task.created_at|date:'M j, Y, g:i a' }}</strong></div>
+        <div><small>Last updated</small><strong>{{ task.updated_at|date:'M j, Y, g:i a' }}</strong></div>
+    </aside>
+</div>
+{% endblock %}

@@ -1,3 +1,115 @@
-{% extends 'base_auth.html' %}
-{% block title %}Profile | Daymark{% endblock %}
-{% block content %}<main class="layout"><section class="intro"><h1>Your<br>profile.</h1><p>Keep your account details current. Your account ID is permanent and cannot be edited.</p></section><section class="panel"><h2>Profile settings</h2><p class="subtitle">Your registration details.</p><form method="post">{% csrf_token %}<div class="profile-grid"><div class="full"><label for="id">Account ID</label><input id="id" class="readonly" value="{{ user.id }}" readonly></div><div><label for="first_name">First name</label><input id="first_name" name="first_name" value="{{ user.first_name }}" required></div><div><label for="last_name">Last name</label><input id="last_name" name="last_name" value="{{ user.last_name }}" required></div><div class="full"><label for="email">Email</label><input id="email" type="email" name="email" value="{{ user.email }}" required></div></div><button type="submit">Save profile</button></form><div class="links"><a href="{% url 'change_password' %}">Change password</a><a href="{% url 'home' %}">Back to tasks</a></div></section></main>{% endblock %}
+{% extends 'base_dashboard.html' %}
+{% block title %}Settings | {{ site_settings.website_name }}{% endblock %}
+{% block content %}
+<section class="hero">
+    <div>
+        <p class="muted">Profile / Settings</p>
+        <h1>Make it yours.</h1>
+        <p>Appearance is saved to your account and follows you everywhere.</p>
+    </div>
+    <a class="button secondary" href="{% url 'home' %}">Back to tasks</a>
+</section>
+<form class="panel" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <section class="settings-section">
+        <h2>Profile</h2>
+        <div class="file-row" style="margin-top:18px">
+            {% if profile.profile_picture %}
+                <img class="profile-image" src="{% url 'profile_picture' %}" alt="Profile picture">
+            {% else %}
+                <span class="profile-image avatar-fallback">{{ user.first_name|first|default:user.username|first|upper }}</span>
+            {% endif %}
+            <div>
+                <label>Profile picture</label>
+                <input type="file" name="profile_picture" accept="image/*">
+                <label style="margin-top:12px">
+                    <input type="checkbox" name="remove_profile_picture" style="width:auto">
+                    Remove current picture
+                </label>
+            </div>
+        </div>
+        <div class="form-grid" style="margin-top:22px">
+            <div>
+                <label>First name</label>
+                <input name="first_name" value="{{ user.first_name }}">
+            </div>
+            <div>
+                <label>Last name</label>
+                <input name="last_name" value="{{ user.last_name }}">
+            </div>
+            <div class="full">
+                <label>Email</label>
+                <input type="email" name="email" value="{{ user.email }}" required>
+            </div>
+        </div>
+    </section>
+    <section class="settings-section">
+        <h2>Appearance</h2>
+        <div class="form-grid appearance-colors" style="margin-top:18px">
+            <div>
+                <label>Background color</label>
+                <input class="color-control" type="color" name="background_color" value="{{ profile.background_color }}">
+            </div>
+            <div>
+                <label>Accent/theme color</label>
+                <input class="color-control" type="color" name="accent_color" value="{{ profile.accent_color }}">
+            </div>
+            <div>
+                <label>Form/card color</label>
+                <input class="color-control" type="color" name="surface_color" value="{{ profile.surface_color }}">
+            </div>
+        </div>
+        <label style="margin-top:22px">Background image</label>
+        <input type="file" name="background_image" accept="image/*">
+        <label style="margin-top:12px">
+            <input type="checkbox" name="remove_background_image" style="width:auto">
+            Remove background image and use color
+        </label>
+    </section>
+    <section class="settings-section">
+        <h2>Task preferences</h2>
+        <div class="form-grid" style="margin-top:18px">
+            <div>
+                <label>Default task color</label>
+                <input class="color-control" type="color" name="default_task_color" value="{{ profile.default_task_color }}">
+            </div>
+            <div>
+                <label>Default priority</label>
+                <select name="default_priority">
+                    <option value="low" {% if profile.default_priority == 'low' %}selected{% endif %}>Low</option>
+                    <option value="medium" {% if profile.default_priority == 'medium' %}selected{% endif %}>Medium</option>
+                    <option value="high" {% if profile.default_priority == 'high' %}selected{% endif %}>High</option>
+                </select>
+            </div>
+        </div>
+    </section>
+    <button class="button" type="submit">Save settings</button>
+</form>
+<section class="panel" style="margin-top:20px">
+    <h2>Categories</h2>
+    <p class="muted">Create your own labels. Deleting one only removes its tag from tasks; the tasks stay.</p>
+    <form class="toolbar" method="post" action="{% url 'add_category' %}">
+        {% csrf_token %}
+        <input class="search" name="name" maxlength="50" placeholder="New category name" required>
+        <button class="button" type="submit">Add category</button>
+    </form>
+    <div class="meta">
+        {% for category in user.task_categories.all %}
+            <span class="badge">
+                {{ category.name }}
+                <form style="display:inline" method="post" action="{% url 'delete_category' category.pk %}" onsubmit="return confirm('Delete this category? Tasks will remain untagged.');">
+                    {% csrf_token %}
+                    <button type="submit" style="border:0;background:none;cursor:pointer">×</button>
+                </form>
+            </span>
+        {% empty %}
+            <span class="muted">No categories yet.</span>
+        {% endfor %}
+    </div>
+</section>
+<section class="panel" style="margin-top:20px">
+    <h2>Password</h2>
+    <p class="muted">Change your password separately from appearance settings.</p>
+    <a class="button secondary" href="{% url 'change_password' %}">Change password</a>
+</section>
+{% endblock %}

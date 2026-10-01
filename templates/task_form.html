@@ -1,0 +1,51 @@
+{% extends 'base_dashboard.html' %} {% block title %}{{ page_title }} | {{ site_settings.website_name }}{% endblock %} {% block content %}
+<p><a class="muted" href="{% url 'home' %}">← Back to tasks</a></p>
+<section class="panel" style="margin-top: 25px">
+  <p class="muted">New task</p>
+  <h1 style="font-size: 3rem">Start somewhere.</h1>
+  <form method="post" action="{% url 'addTask' %}">
+    {% csrf_token %}
+    <div class="form-grid">
+      <div class="full">
+        <label>Title</label
+        ><input name="task" maxlength="250" required autofocus />
+      </div>
+      <div class="full">
+        <label>Description</label
+        ><textarea
+          name="description"
+          placeholder="What does done look like?"
+        ></textarea>
+      </div>
+      <div>
+        <label>Priority</label
+        ><select name="priority">
+          <option value="low">Low</option>
+          <option value="medium" selected>Medium</option>
+          <option value="high">High</option>
+        </select>
+      </div>
+      <div>
+        <label>Category</label
+        ><select name="category">
+          <option value="">No category</option>
+          {% for value,label in categories %}
+          <option value="{{ value }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div><label>Due date</label><input type="date" name="due_date" /></div>
+      <div>
+        <label>Task color</label
+        ><input
+            class="color-control" type="color"
+          name="color"
+          value="{{ profile.default_task_color }}"
+          title="Choose task color"
+        />
+      </div>
+    </div>
+    <button class="button" type="submit">Add task</button>
+  </form>
+</section>
+{% endblock %}
